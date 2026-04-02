@@ -40,7 +40,7 @@ def get_days_in_month(year, month):
 
 def make_calendar(year, month):
     output = ''
-    SEPARATOR = '============================\n============================\n\n'
+    SEPARATOR = '============================\n\n============================\n\n'
 
     for day in range(1, get_days_in_month(year, month) + 1):
         current_day = datetime(year, month, day)
@@ -48,7 +48,7 @@ def make_calendar(year, month):
 
         if day_name not in ['SAT', 'SUN']:
             date_str = f'{year}-{two_digitify(month)}-{two_digitify(day)}'
-            header = f'{day_name} {date_str}\n'
+            header = f'#### {day_name} {date_str}\n'
             output += header + SEPARATOR
 
     return output
@@ -58,7 +58,7 @@ def main():
     today = datetime.now()
     year = args.y or today.year
     month = args.m or today.month
-    filename = os.path.join(os.path.expanduser('~'), 'Documents', 'NOTES', 'standup', f'{year}-{two_digitify(month)}.txt')
+    filename = os.path.join(os.path.expanduser('~'), 'Documents', 'NOTES', 'standup', f'{year}-{two_digitify(month)}.md')
 
     if not is_valid_month(month):
         sys.exit(f'Enter a valid month.')
