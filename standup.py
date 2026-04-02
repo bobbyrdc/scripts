@@ -40,7 +40,7 @@ def get_days_in_month(year, month):
 
 def make_calendar(year, month):
     output = ''
-    SEPARATOR = '============================\n\n============================\n\n'
+    SEPARATOR = '┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅\n\n'
 
     for day in range(1, get_days_in_month(year, month) + 1):
         current_day = datetime(year, month, day)
@@ -48,7 +48,7 @@ def make_calendar(year, month):
 
         if day_name not in ['SAT', 'SUN']:
             date_str = f'{year}-{two_digitify(month)}-{two_digitify(day)}'
-            header = f'#### {day_name} {date_str}\n'
+            header = f'┅┅┅┅┅┅ {day_name} {date_str} ┅┅┅┅┅┅\n'
             output += header + SEPARATOR
 
     return output
