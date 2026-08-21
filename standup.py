@@ -78,10 +78,11 @@ def main() -> None:
     filename = os.path.join(base_dir, f'{year}-{month:02}.md')
 
     if os.path.exists(filename) and not args.force:
-        print(f'File {filename} already exists.')
         if args.open:
+            print(f'Opening existing {filename}')
             open_file(filename)
             sys.exit(0)
+        print(f'File {filename} already exists.')
         print('Use --force to overwrite, or --open to open it.')
         sys.exit(1)
 
