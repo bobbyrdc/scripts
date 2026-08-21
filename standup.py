@@ -23,9 +23,6 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('-f', '--force', action='store_true', help='Overwrite the file if it already exists.')
     return parser.parse_args()
 
-def two_digitify(num: int) -> str:
-    return f'{num:02}'
-
 def is_valid_month(month: int) -> bool:
     return 1 <= month <= 12
 
@@ -45,7 +42,7 @@ def make_calendar(year: int, month: int) -> str:
         day_name = current_day.strftime('%a').upper()
 
         if day_name not in ['SAT', 'SUN']:
-            date_str = f'{year}-{two_digitify(month)}-{two_digitify(day)}'
+            date_str = current_day.strftime('%Y-%m-%d')
             header = f'┅┅┅┅┅┅ {day_name} {date_str} ┅┅┅┅┅┅\n'
             output += header + SEPARATOR
 
@@ -78,7 +75,7 @@ def main() -> None:
         sys.exit('Enter a valid month (1-12).')
 
     base_dir = os.path.expanduser(args.dir) if args.dir else os.path.join(os.path.expanduser('~'), 'Documents', 'NOTES', 'standup')
-    filename = os.path.join(base_dir, f'{year}-{two_digitify(month)}.md')
+    filename = os.path.join(base_dir, f'{year}-{month:02}.md')
 
     if os.path.exists(filename) and not args.force:
         print(f'File {filename} already exists.')
