@@ -21,6 +21,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--dir', help='Directory to write the file to. Defaults to ~/Documents/NOTES/standup.')
     parser.add_argument('--open', action='store_true', help='Open the file after creating it (or if it already exists).')
     parser.add_argument('-f', '--force', action='store_true', help='Overwrite the file if it already exists.')
+    parser.add_argument('--auto', action='store_true', help="Only act if today is the last weekday of the month; then generate next month's file.")
     return parser.parse_args()
 
 def is_valid_month(month: int) -> bool:
@@ -31,6 +32,19 @@ def shift_month(year: int, month: int, delta: int) -> tuple[int, int]:
     year += index // 12
     month = index % 12 + 1
     return year, month
+
+# Run daily at 9:00 AM by the launchd agent at
+# ~/Library/LaunchAgents/com.bosmith.standup-auto.plist, which calls `standup --auto`;
+# this no-ops unless today is the last weekday of the month.
+# Logs: ~/Library/Logs/standup-auto.log
+def is_last_weekday_of_month(date: datetime) -> bool:
+    if date.weekday() >= 5:
+        return False
+    days_in_month = calendar.monthrange(date.year, date.month)[1]
+    for day in range(date.day + 1, days_in_month + 1):
+        if datetime(date.year, date.month, day).weekday() < 5:
+            return False
+    return True
 
 def make_calendar(year: int, month: int) -> str:
     output = ''
@@ -62,7 +76,13 @@ def main() -> None:
     args = get_args()
     today = datetime.now()
 
-    if args.next or args.prev:
+    if args.auto:
+        if args.next or args.prev or args.m is not None or args.y is not None:
+            sys.exit('Cannot combine --auto with -m/-y/--next/--prev.')
+        if not is_last_weekday_of_month(today):
+            sys.exit(0)
+        year, month = shift_month(today.year, today.month, 1)
+    elif args.next or args.prev:
         if args.m is not None or args.y is not None:
             sys.exit('Cannot combine --next/--prev with -m/-y.')
         delta = 1 if args.next else -1
